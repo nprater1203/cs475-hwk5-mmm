@@ -34,9 +34,15 @@ int main(int argc, char *argv[]) {
 			size = atoi(argv[2]);
 			printf("========\nmode: sequential\nthread count: 1\nsize: %d\n========\n",size);
 			double totalTime = seqThree();
+			//double totalTime = 0;
+			// mmm_init();
+			// mmm_seq();
+			// mmm_reset(array1);
+			// mmm_reset(array2);
+			// mmm_reset(sMatrix);
 			printf("Sequential Time (avg of 3 runs): %.6f sec\n", (totalTime/3));
 
-			mmm_freeup();
+			//mmm_freeup();
 		}
 		else
 		{
@@ -71,6 +77,10 @@ int main(int argc, char *argv[]) {
 			for (int i = 0; i < numThreads; i++) {
 				//printf("Creating Thread %d\n",i);
 				pthread_create(&threads[i], NULL, mmm_par, &args[i]);
+				if(i < size-1)
+				{
+					mmm_reset(pMatrix);
+				}
 			}
 
 			/** JOIN PHASE **/
@@ -87,7 +97,8 @@ int main(int argc, char *argv[]) {
 			double dif = mmm_verify();
 			printf("Verifying... largest error between parallel and sequential matrix: %.6f\n", dif);
 
-
+			free(threads);
+			threads = NULL;
 			mmm_freeup();		
 		}
 		else
@@ -121,6 +132,7 @@ double seqThree()
 	mmm_reset(array1);
 	mmm_reset(array2);
 	mmm_reset(sMatrix);
+	mmm_freeup();
 	clockend = rtclock(); // stop clocking
 	totalTime += clockend-clockstart;
 
@@ -130,6 +142,7 @@ double seqThree()
 	mmm_reset(array1);
 	mmm_reset(array2);
 	mmm_reset(sMatrix);
+	mmm_freeup();
 	clockend = rtclock(); // stop clocking
 	totalTime += clockend-clockstart;
 

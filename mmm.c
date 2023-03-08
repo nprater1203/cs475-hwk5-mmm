@@ -20,7 +20,6 @@
 void mmm_init()
 {
 	// TODO
-	// malloc a size N array of pointers to ints
 	time_t t;
 	srand((unsigned) time(&t));
 
@@ -42,29 +41,27 @@ void mmm_init()
 	{
 		for (int j = 0; j < size; j++)
 		{
-			array1[i][j] = rand() % 100;
-			array2[i][j] = rand() % 100;
+			double checkNum = rand() % 100;
+			if(checkNum == 0)
+			{
+				array1[i][j] = checkNum + 1;
+			}
+			else
+			{
+				array1[i][j] = checkNum;
+			}
+
+			checkNum = rand() % 100;
+			if(checkNum == 0)
+			{
+				array2[i][j] = checkNum + 1;
+			}
+			else
+			{
+				array2[i][j] = checkNum;
+			}
 		}
 	}
-	// printf("ARRAY 1\n");
-
-	// for (int i = 0; i < size; i++)
-	// {
-	// 	for (int j = 0; j < size; j++)
-	// 	{
-	// 		printf("%f ", array1[i][j]);
-	// 	}
-	// 	printf("\n");
-	// }
-	// printf("ARRAY 2\n");
-	// for (int i = 0; i < size; i++)
-	// {
-	// 	for (int j = 0; j < size; j++)
-	// 	{
-	// 		printf("%f ", array2[i][j]);
-	// 	}
-	// 	printf("\n");
-	// }
 }
 
 /**
@@ -78,8 +75,7 @@ void mmm_reset(double **matrix)
 	{
 		for (int j = 0; j < size; j++)
 		{
-			sMatrix[i][j] = 0;
-			pMatrix[i][j] = 0;
+			matrix[i][j] = 0;
 		}
 	}
 }
@@ -95,6 +91,8 @@ void mmm_freeup()
 	{
 		free(array1[i]);
 		array1[i] = NULL; // remove dangling pointer
+		free(array2[i]);
+		array2[i] = NULL; // remove dangling pointer
 		free(array2[i]);
 		sMatrix[i] = NULL; // remove dangling pointer
 		free(sMatrix[i]);
@@ -120,31 +118,16 @@ void mmm_seq()
 {
 	// TODO - code to perform sequential MMM
 	int b = 0;
-	// double temp = 0;
-	//printf("SEQ MATRIX\n");
-
 	for (int i = 0; i < size; i++)
 	{
 		for (int j = 0; j < size; j++)
 		{
-			//printf("Mutiply: %f\n",  array1[i][j] * array2[j][i]);
 			sMatrix[i][b] += array1[i][j] * array2[j][i];
 			b++;
 		}
-		// printf("matrix = %f", sMatrix[i][b]);
-		// temp = 0;
 		b = 0;
 	}
-	// printf("S Matrix\n");
 
-	// for (int i = 0; i < size; i++)
-	// {
-	// 	for (int j = 0; j < size; j++)
-	// 	{
-	// 		printf("%f ", sMatrix[i][j]);
-	// 	}
-	// 	printf("\n");
-	// }
 }
 
 /**
@@ -154,32 +137,16 @@ void *mmm_par(void *args)
 {
 	// TODO - code to perform parallel MMM
 	thread_args *params = (thread_args *)args;
-	// printf("Begin: %ld\nEnd: %ld\n", params->begin,params->end);
 	int b = 0;
-	// double temp = 0;
-	//printf("PAR MATRIX\n");
 	for (int i = params->begin; i < params->end; i++)
 	{
 		for (int j = params->begin; j < params->end; j++)
 		{
-			// printf("Mutiply: %f\n",  array1[i][j] * array2[j][i]);
 			pMatrix[i][b] += array1[i][j] * array2[j][i];
 			b++;
 		}
-		// printf("matrix = %f\n", sMatrix[i][b]);
-		// temp = 0;
 		b = 0;
 	}
-	// printf("P Matrix\n");
-
-	// 	for (int i = 0; i < size; i++)
-	// {
-	// 	for (int j = 0; j < size; j++)
-	// 	{
-	// 		printf("%f ", pMatrix[i][j]);
-	// 	}
-	// 	printf("\n");
-	// }
 	return NULL;
 }
 
@@ -199,17 +166,15 @@ double mmm_verify()
 	{
 		for (int j = 0; j < size; j++)
 		{
-			//printf("Check: seq %f and par %f\n", sMatrix[i][j], pMatrix[i][j]);
 			if (sMatrix[i][j] != pMatrix[i][j])
 			{
-				if (largestDif < abs(sMatrix[i][j] - (pMatrix[i][j]/numThreads)))
+				if (largestDif > abs(sMatrix[i][j] - pMatrix[i][j]))
 				{
 					largestDif = abs(sMatrix[i][j] - pMatrix[i][j]);
 				}
 			}
 		}
 	}
-
 	return largestDif;
 }
 

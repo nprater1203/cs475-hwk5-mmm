@@ -24,8 +24,6 @@ typedef struct thread_args {
   long end;   // where to end summation
 } thread_args;
 
-void *partialSum(void *args);
-
 void mmm_init();
 void mmm_reset(double **);
 void mmm_freeup();
