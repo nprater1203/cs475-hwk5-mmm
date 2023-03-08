@@ -60,6 +60,9 @@ void mmm_init()
 			{
 				array2[i][j] = checkNum;
 			}
+
+			sMatrix[i][j] = 0;
+			pMatrix[i][j] = 0;
 		}
 	}
 }
@@ -93,11 +96,10 @@ void mmm_freeup()
 		array1[i] = NULL; // remove dangling pointer
 		free(array2[i]);
 		array2[i] = NULL; // remove dangling pointer
-		free(array2[i]);
-		sMatrix[i] = NULL; // remove dangling pointer
 		free(sMatrix[i]);
-		pMatrix[i] = NULL; // remove dangling pointer
+		sMatrix[i] = NULL; // remove dangling pointer
 		free(pMatrix[i]);
+		pMatrix[i] = NULL; // remove dangling pointer
 	}
 
 	// free original array

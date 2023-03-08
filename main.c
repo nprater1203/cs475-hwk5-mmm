@@ -20,7 +20,6 @@ double seqThree();
 
 int main(int argc, char *argv[]) {
 	double clockstart, clockend;
-	//double totalTime = 0;
 
 	if(strcmp(argv[0],"./mmm") == 0 && argc == 1)
 	{
@@ -34,15 +33,8 @@ int main(int argc, char *argv[]) {
 			size = atoi(argv[2]);
 			printf("========\nmode: sequential\nthread count: 1\nsize: %d\n========\n",size);
 			double totalTime = seqThree();
-			//double totalTime = 0;
-			// mmm_init();
-			// mmm_seq();
-			// mmm_reset(array1);
-			// mmm_reset(array2);
-			// mmm_reset(sMatrix);
 			printf("Sequential Time (avg of 3 runs): %.6f sec\n", (totalTime/3));
-
-			//mmm_freeup();
+			mmm_freeup();
 		}
 		else
 		{
@@ -55,12 +47,11 @@ int main(int argc, char *argv[]) {
 		if(argc == 4)
 		{
 			size = atoi(argv[3]);
-			printf("========\nmode: parallel\nthread count: %d\nsize: %d\n========\n", atoi(argv[2]), atoi(argv[3]));
+			printf("========\nmode: parallel\nthread count: %d\nsize: %d\n========\n",
+			 atoi(argv[2]), atoi(argv[3]));
 			numThreads = atoi(argv[2]);
 
 			seqTime = seqThree();
-			// mmm_init();
-			// mmm_seq();
 			printf("Sequential Time (avg of 3 runs): %.6f\n", seqTime/3);
 			clockstart = rtclock();
 			
@@ -83,7 +74,6 @@ int main(int argc, char *argv[]) {
 				}
 			}
 
-			/** JOIN PHASE **/
 			// wait for threads to finish; combine partially computed sum
 			for (int i = 0; i < numThreads; i++) 
 			{
@@ -95,10 +85,13 @@ int main(int argc, char *argv[]) {
 			printf("Speedup: %.6f\n", seqTime/parTime);
 
 			double dif = mmm_verify();
-			printf("Verifying... largest error between parallel and sequential matrix: %.6f\n", dif);
+			printf("Verifying... largest error between parallel and sequential matrix: %.6f\n",
+			 dif);
 
 			free(threads);
 			threads = NULL;
+			free(args);
+			args = NULL;
 			mmm_freeup();		
 		}
 		else
@@ -108,19 +101,10 @@ int main(int argc, char *argv[]) {
 
 	}
 
-	// if(notJump)
-	// {
-	// 	printf("size: %d\n========\n", size);
-	// 	double totalTime = seqThree();
-
-
-	// 	printf("Sequential Time (avg of 3 runs): %.6f sec\n", (totalTime/3));
-
-	// 	mmm_freeup();
-	// }
-
 	return 0;
 }
+
+// MMM in sequentual mode 3 times
 double seqThree()
 {
 	double clockstart, clockend;
@@ -156,25 +140,3 @@ double seqThree()
 
 }
 
-
-// void *partialSum(void *args) {
-//   // cast input as struct thread_args
-//   thread_args *params = (thread_args*) args;
-
-//   	int b = 0;
-// 	//double temp = 0;
-// 	for(int i = params->begin; i < params->end; i++)
-// 	{
-// 		for(int j = params->begin; j < params->end; j++)
-// 		{
-// 			//printf("Mutiply: %f\n",  array1[i][j] * array2[j][i]);
-// 			matrix[i][b] += array1[i][j] * array2[j][i];
-// 			b++;
-
-// 		}
-// 		//printf("matrix = %f\n", matrix[i][b]);
-// 		//temp = 0;
-// 		b=0;
-// 	}
-//   return NULL;
-// }

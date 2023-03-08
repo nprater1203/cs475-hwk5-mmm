@@ -13,8 +13,6 @@
 // as well as the size of the matrices, etc.
 
 extern double **sMatrix, **pMatrix, **array1, **array2, seqTime, parTime;
-// extern int** array1;
-// extern int** array2;
 extern int size, numThreads;
 
 /** struct to hold parameters to partialSum() **/
@@ -30,7 +28,5 @@ void mmm_freeup();
 void mmm_seq();
 void *mmm_par(void *args);
 double mmm_verify();
-
-//double seqThree();
 
 #endif /* MMM_H_ */
